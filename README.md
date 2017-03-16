@@ -22,7 +22,7 @@ On maven, update your `pom.xml` in the following way:
         <version>0.1.1</version>
         <type>pom</type>
     </dependency>
-
+```
 
 
 # Configuration
