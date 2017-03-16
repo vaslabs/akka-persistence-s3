@@ -6,7 +6,7 @@ organization := "io.findify"
 
 crossScalaVersions := Seq("2.11.8", "2.12.1")
 
-version := "0.1.0"
+version := "0.1.1"
 
 val akkaVersion = "2.4.17"
 
