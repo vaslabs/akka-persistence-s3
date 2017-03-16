@@ -1,7 +1,8 @@
 # Amazon S3 Snapshot Store Plugin for Akka Persistence
 
-An [Akka Persistence](http://doc.akka.io/docs/akka/2.4.1/scala/persistence.html) snapshot store backed by
-[Amazon S3](https://aws.amazon.com/s3/)
+An [Akka Persistence](http://doc.akka.io/docs/akka/2.4.17/scala/persistence.html) snapshot store backed by
+[Amazon S3](https://aws.amazon.com/s3/). This is a forked version of an abandoned plugin by 
+[TanUkkii007](https://github.com/TanUkkii007) with some new features.
 
 **Please note that this module only provides Snapshot plugin.**
 
