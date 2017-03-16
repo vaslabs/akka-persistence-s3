@@ -6,6 +6,8 @@ organization := "io.findify"
 
 crossScalaVersions := Seq("2.11.8", "2.12.1")
 
+version := "0.1.0"
+
 val akkaVersion = "2.4.17"
 
 licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
