@@ -6,12 +6,13 @@ import akka.persistence.snapshot.SnapshotStoreSpec
 import com.typesafe.config.ConfigFactory
 import io.findify.akka.persistence.s3.{S3Client, S3ClientConfig}
 import io.findify.s3mock.S3Mock
-
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.collection.JavaConversions._
+import scala.concurrent.Await
 
-class S3SnapshotStoreSpec extends SnapshotStoreSpec(ConfigFactory.parseString(
+/**
+  * Created by shutty on 3/16/17.
+  */
+class S3SnapshotStorePrefixSpec  extends SnapshotStoreSpec(ConfigFactory.parseString(
   """
     |akka.persistence.snapshot-store.plugin = "s3-snapshot-store"
     |s3-client{
@@ -23,6 +24,7 @@ class S3SnapshotStoreSpec extends SnapshotStoreSpec(ConfigFactory.parseString(
     |    path-style-access = true
     |  }
     |}
+    |s3-snapshot-store.prefix = "foo/"
   """.stripMargin
 ).withFallback(ConfigFactory.load())) with SnapshotKeySupport {
 
@@ -50,3 +52,4 @@ class S3SnapshotStoreSpec extends SnapshotStoreSpec(ConfigFactory.parseString(
     super.afterAll()
   }
 }
+

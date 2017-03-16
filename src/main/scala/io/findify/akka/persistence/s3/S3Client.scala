@@ -41,11 +41,15 @@ trait S3Client {
   }
 
   def getObject(bucketName: String, key: String)(implicit ec: ExecutionContext): Future[S3Object] = Future {
-    client.getObject(new GetObjectRequest(bucketName, key))
+    val res = client.getObject(new GetObjectRequest(bucketName, key))
+    println(res.toString)
+    val br=1
+    res
   }
 
   def listObjects(request: ListObjectsRequest)(implicit ec: ExecutionContext): Future[ObjectListing] = Future {
-    client.listObjects(request)
+    val list = client.listObjects(request)
+    list
   }
 
   def deleteObject(bucketName: String, key: String)(implicit ec: ExecutionContext): Future[Unit] = Future {

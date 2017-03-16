@@ -42,7 +42,7 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
   private def load(metadata: immutable.Seq[SnapshotMetadata]): Future[Option[SelectedSnapshot]] = metadata.lastOption match {
     case None => Future.successful(None)
     case Some(md) =>
-      s3Client.getObject(settings.bucketName, snapshotKey(md))(s3Dispatcher)
+      s3Client.getObject(settings.bucketName, snapshotKey(settings.prefix, md))(s3Dispatcher)
         .map { obj =>
           val snapshot = deserialize(obj.getObjectContent)
           Some(SelectedSnapshot(md, snapshot.data))
@@ -59,7 +59,7 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
     objectMetadata.setContentLength(serialized.size)
     s3Client.putObject(
       settings.bucketName,
-      snapshotKey(metadata),
+      snapshotKey(settings.prefix, metadata),
       serialized.stream,
       objectMetadata
     )(s3Dispatcher).map(_ => ())
@@ -69,7 +69,7 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
     if (metadata.timestamp == 0L)
       deleteAsync(metadata.persistenceId, SnapshotSelectionCriteria(metadata.sequenceNr, Long.MaxValue, metadata.sequenceNr, Long.MinValue))
     else
-      s3Client.deleteObject(settings.bucketName, snapshotKey(metadata))(s3Dispatcher)
+      s3Client.deleteObject(settings.bucketName, snapshotKey(settings.prefix, metadata))(s3Dispatcher)
   }
 
   override def deleteAsync(persistenceId: String, criteria: SnapshotSelectionCriteria): Future[Unit] = {
@@ -81,10 +81,10 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
     s3Client.listObjects(
       new ListObjectsRequest()
         .withBucketName(settings.bucketName)
-        .withPrefix(prefixFromPersistenceId(persistenceId))
+        .withPrefix(prefixFromPersistenceId(settings.prefix, persistenceId))
         .withDelimiter("/")
     )(s3Dispatcher)
-      .map(_.getObjectSummaries.toList.map(s => parseKeyToMetadata(s.getKey))
+      .map(_.getObjectSummaries.toList.map(s => parseKeyToMetadata(settings.prefix, s.getKey))
         .filter(m => m.sequenceNr >= criteria.minSequenceNr && m.sequenceNr <= criteria.maxSequenceNr && m.timestamp >= criteria.minTimestamp && m.timestamp <= criteria.maxTimestamp))
 
   }
