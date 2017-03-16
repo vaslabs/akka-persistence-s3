@@ -1,14 +1,16 @@
-package akka.persistence.s3
-package snapshot
+package io.findify.akka.persistence.s3.snapshot
 
 import java.io.ByteArrayInputStream
+
 import akka.actor.ActorLogging
 import akka.persistence.serialization.Snapshot
-import akka.persistence.{ SelectedSnapshot, SnapshotMetadata, SnapshotSelectionCriteria }
+import akka.persistence.{SelectedSnapshot, SnapshotMetadata, SnapshotSelectionCriteria}
 import akka.persistence.snapshot.SnapshotStore
 import akka.serialization.SerializationExtension
-import com.amazonaws.services.s3.model.{ ObjectMetadata, S3ObjectInputStream, ListObjectsRequest }
+import com.amazonaws.services.s3.model.{ListObjectsRequest, ObjectMetadata, S3ObjectInputStream}
 import com.typesafe.config.Config
+import io.findify.akka.persistence.s3.{S3Client, S3ClientConfig}
+
 import scala.collection.JavaConversions._
 import scala.collection.immutable
 import scala.concurrent.Future

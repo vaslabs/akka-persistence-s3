@@ -1,39 +1,51 @@
 name := "akka-persistence-s3"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.11.7", "2.12.0-M3")
+organization := "io.findify"
 
-val akkaVersion = "2.4.2"
+crossScalaVersions := Seq("2.11.8", "2.12.1")
+
+val akkaVersion = "2.4.17"
+
+licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
+
+homepage := Some(url("https://github.com/findify/akka-persistence-s3"))
 
 libraryDependencies ++= Seq(
-  "com.amazonaws" % "aws-java-sdk-core" % "1.10.52",
-  "com.amazonaws" % "aws-java-sdk-s3" % "1.10.52",
+  "com.amazonaws" % "aws-java-sdk-core" % "1.11.105",
+  "com.amazonaws" % "aws-java-sdk-s3" % "1.11.105",
   "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-persistence-tck" % akkaVersion % "test",
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
   "org.scalatest" %% "scalatest" % "2.1.7" % "test",
   "commons-io" % "commons-io" % "2.4" % "test",
-  "org.hdrhistogram" % "HdrHistogram" % "2.1.8" % "test"
+  "org.hdrhistogram" % "HdrHistogram" % "2.1.8" % "test",
+  "io.findify" %% "s3mock" % "0.1.9" % "test"
 )
 
 parallelExecution in Test := false
 
-import com.typesafe.sbt.SbtScalariform
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
+publishMavenStyle := true
 
-SbtScalariform.scalariformSettings
-ScalariformKeys.preferences in Compile  := formattingPreferences
-ScalariformKeys.preferences in Test     := formattingPreferences
-
-def formattingPreferences = {
-  import scalariform.formatter.preferences._
-  FormattingPreferences()
-    .setPreference(RewriteArrowSymbols, false)
-    .setPreference(AlignParameters, true)
-    .setPreference(AlignSingleLineCaseStatements, true)
-    .setPreference(SpacesAroundMultiImports, true)
-    .setPreference(DoubleIndentClassDeclaration, true)
-    .setPreference(AlignArguments, true)
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
+
+pomExtra := (
+  <scm>
+    <url>git@github.com:findify/akka-persistence-s3.git</url>
+    <connection>scm:git:git@github.com:findify/akka-persistence-s3.git</connection>
+  </scm>
+    <developers>
+      <developer>
+        <id>romangrebennikov</id>
+        <name>Roman Grebennikov</name>
+        <url>http://www.dfdx.me</url>
+      </developer>
+    </developers>)

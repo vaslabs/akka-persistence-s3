@@ -1,5 +1,4 @@
-package akka.persistence.s3
-package snapshot
+package io.findify.akka.persistence.s3.snapshot
 
 import com.typesafe.config.Config
 

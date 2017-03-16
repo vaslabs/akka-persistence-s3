@@ -1,7 +1,7 @@
-package akka.persistence.s3.snapshot
+package io.findify.akka.persistence.s3.snapshot
 
 import akka.persistence.SnapshotMetadata
-import org.scalatest.{ DiagrammedAssertions, WordSpecLike }
+import org.scalatest.{DiagrammedAssertions, WordSpecLike}
 
 class SnapshotKeySpec extends WordSpecLike
     with DiagrammedAssertions with SnapshotKeySupport {

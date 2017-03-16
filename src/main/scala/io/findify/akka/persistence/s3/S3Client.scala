@@ -1,12 +1,12 @@
-package akka.persistence.s3
+package io.findify.akka.persistence.s3
 
 import java.io.InputStream
 
-import com.amazonaws.auth.{ BasicAWSCredentials, DefaultAWSCredentialsProviderChain }
-import com.amazonaws.services.s3.{ S3ClientOptions, AmazonS3Client }
+import com.amazonaws.auth.{BasicAWSCredentials, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.services.s3.model._
+import com.amazonaws.services.s3.{AmazonS3Client, S3ClientOptions}
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{ExecutionContext, Future}
 
 trait S3Client {
   val s3ClientConfig: S3ClientConfig

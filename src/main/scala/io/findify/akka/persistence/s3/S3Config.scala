@@ -1,4 +1,4 @@
-package akka.persistence.s3
+package io.findify.akka.persistence.s3
 
 import com.amazonaws.regions.{ Regions, Region }
 import com.typesafe.config.Config

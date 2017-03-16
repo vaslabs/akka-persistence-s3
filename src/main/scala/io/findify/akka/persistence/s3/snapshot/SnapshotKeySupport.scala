@@ -1,4 +1,4 @@
-package akka.persistence.s3.snapshot
+package io.findify.akka.persistence.s3.snapshot
 
 import akka.persistence.SnapshotMetadata
 
