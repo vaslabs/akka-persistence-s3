@@ -8,7 +8,21 @@ An [Akka Persistence](http://doc.akka.io/docs/akka/2.4.1/scala/persistence.html)
 
 # Installation
 
-Not published yet.
+This package is available for Scala 2.11/2.12 (on Java 8). To install using SBT, add these
+ statements to your `build.sbt`:
+
+    libraryDependencies += "io.findify" %% "akka-persistence-s3" % "0.1.1"
+
+On maven, update your `pom.xml` in the following way:
+```xml
+    // add this entry to <dependencies/>
+    <dependency>
+        <groupId>io.findify</groupId>
+        <artifactId>akka-persistence-s3_2.12</artifactId>
+        <version>0.1.1</version>
+        <type>pom</type>
+    </dependency>
+
 
 
 # Configuration
@@ -29,6 +43,7 @@ s3-client{
 
 s3-snapshot-store {
   bucket-name = "snapshot"
+  prefix = "some/dir/" 
   extension = "ss"
   max-load-attempts = 3
 }
