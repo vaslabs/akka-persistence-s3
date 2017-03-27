@@ -1,7 +1,5 @@
 package io.findify.akka.persistence.s3.snapshot
 
-import java.io.File
-
 import akka.persistence.snapshot.SnapshotStoreSpec
 import com.typesafe.config.ConfigFactory
 import io.findify.akka.persistence.s3.{S3Client, S3ClientConfig}
@@ -9,8 +7,7 @@ import io.findify.s3mock.S3Mock
 import io.findify.s3mock.provider.FileProvider
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.collection.JavaConversions._
+import scala.concurrent.{Await}
 
 class S3SnapshotStoreSpec
     extends SnapshotStoreSpec(

@@ -16,7 +16,6 @@ trait S3Client {
     s3ClientConfig.endpoint.fold(
       clientBuilder.setRegion(s3ClientConfig.region.getName)
     ) { endpoint =>
-      println(endpoint)
       clientBuilder.setEndpointConfiguration(
         new EndpointConfiguration(endpoint, s3ClientConfig.region.getName)
       )

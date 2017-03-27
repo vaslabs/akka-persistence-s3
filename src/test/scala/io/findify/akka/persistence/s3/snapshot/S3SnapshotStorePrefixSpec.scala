@@ -1,7 +1,5 @@
 package io.findify.akka.persistence.s3.snapshot
 
-import java.io.File
-
 import akka.persistence.snapshot.SnapshotStoreSpec
 import com.typesafe.config.ConfigFactory
 import io.findify.akka.persistence.s3.{S3Client, S3ClientConfig}
@@ -21,7 +19,7 @@ class S3SnapshotStorePrefixSpec
           """
     |akka.persistence.snapshot-store.plugin = "s3-snapshot-store"
     |s3-client{
-    |  region = "us-west-2"
+    |  region = "eu-west-1"
     |  endpoint = "http://localhost:4567"
     |  options {
     |    path-style-access = true
