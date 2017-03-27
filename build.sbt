@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.1.7" % "test",
   "commons-io" % "commons-io" % "2.4" % "test",
   "org.hdrhistogram" % "HdrHistogram" % "2.1.8" % "test",
-  "io.findify" %% "s3mock" % "0.1.9" % "test"
+  "io.findify" %% "s3mock" % "0.1.10" % "test"
 )
 
 parallelExecution in Test := false
