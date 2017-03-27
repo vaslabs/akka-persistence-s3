@@ -24,7 +24,7 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.1.7" % "test",
   "commons-io" % "commons-io" % "2.4" % "test",
   "org.hdrhistogram" % "HdrHistogram" % "2.1.8" % "test",
-  "io.findify" %% "s3mock" % "0.1.10" % "test"
+  "io.findify" %% "s3mock" % "0.1.9" % "test"
 )
 
 parallelExecution in Test := false
@@ -36,11 +36,10 @@ publishTo := {
   if (isSnapshot.value)
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+    Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
-pomExtra := (
-  <scm>
+pomExtra := (<scm>
     <url>git@github.com:findify/akka-persistence-s3.git</url>
     <connection>scm:git:git@github.com:findify/akka-persistence-s3.git</connection>
   </scm>
