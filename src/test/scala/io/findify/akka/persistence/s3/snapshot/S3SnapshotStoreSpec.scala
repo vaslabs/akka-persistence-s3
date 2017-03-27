@@ -6,6 +6,7 @@ import akka.persistence.snapshot.SnapshotStoreSpec
 import com.typesafe.config.ConfigFactory
 import io.findify.akka.persistence.s3.{S3Client, S3ClientConfig}
 import io.findify.s3mock.S3Mock
+import io.findify.s3mock.provider.FileProvider
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -19,7 +20,7 @@ class S3SnapshotStoreSpec
     |akka.persistence.snapshot-store.plugin = "s3-snapshot-store"
     |s3-client{
     |  region = "us-west-2"
-    |  endpoint = "http://127.0.0.1:8001"
+    |  endpoint = "http://127.0.0.1:4567"
     |  options {
     |    path-style-access = true
     |  }
@@ -30,15 +31,13 @@ class S3SnapshotStoreSpec
     with SnapshotKeySupport {
 
   var s3Client: S3Client = _
-  var s3mock: S3Mock = S3Mock.create(8001, "/tmp/s3snap")
+  var s3mock: S3Mock = new S3Mock(4567, new FileProvider("/tmp/s3snap"))
   val bucketName = "snapshot"
 
   val extensionName: String = "ss"
 
   override def beforeAll() = {
     import system.dispatcher
-    val dir = new File("/tmp/s3snap")
-    if (dir.exists()) dir.delete()
     s3mock.start
     s3Client = new S3Client {
       override val s3ClientConfig: S3ClientConfig = new S3ClientConfig(
