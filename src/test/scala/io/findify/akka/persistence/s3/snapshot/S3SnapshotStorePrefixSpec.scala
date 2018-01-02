@@ -32,7 +32,7 @@ class S3SnapshotStorePrefixSpec
     with SnapshotKeySupport {
 
   var s3Client: S3Client = _
-  var s3mock: S3Mock = new S3Mock(4567, new FileProvider("/tmp/s3snap"))
+  var s3mock: S3Mock = new S3Mock(4567, new FileProvider("/tmp/s3prefSnap"))
   val bucketName = "snapshot"
 
   val extensionName: String = "ss"
