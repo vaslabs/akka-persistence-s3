@@ -7,4 +7,5 @@ class S3SnapshotConfig(config: Config) {
   val extension = config getString "extension"
   val prefix = config getString "prefix"
   val maxLoadAttempts = config getInt "max-load-attempts"
+  val keySupportClass = config getString "key-generator-class"
 }

@@ -7,25 +7,6 @@ An [Akka Persistence](http://doc.akka.io/docs/akka/2.4.17/scala/persistence.html
 **Please note that this module only provides Snapshot plugin.**
 
 
-# Installation
-
-This package is available for Scala 2.11/2.12 (on Java 8). To install using SBT, add these
- statements to your `build.sbt`:
-
-    libraryDependencies += "io.findify" %% "akka-persistence-s3" % "0.1.1"
-
-On maven, update your `pom.xml` in the following way:
-```xml
-    // add this entry to <dependencies/>
-    <dependency>
-        <groupId>io.findify</groupId>
-        <artifactId>akka-persistence-s3_2.12</artifactId>
-        <version>0.1.1</version>
-        <type>pom</type>
-    </dependency>
-```
-
-
 # Configuration
 
 ```
@@ -59,3 +40,16 @@ A snapshot object is saved with following key format.
 ```
 
 Note that sequenceNr is reversed to optimize performance for partitioning. See http://docs.aws.amazon.com/AmazonS3/latest/dev/request-rate-perf-considerations.html
+
+# S3 namespace structure
+
+The default behaviour is for a snapshot object is saved to the following s3 name space:
+```
+<bucketName>/<prefix>/<actor-persistenceId>/
+```
+This can however be customised by specifying another implementation of: 'io.findify.akka.persistence.s3.snapshot.keys.SnapshotKeySupport'
+in the config file using the key:
+
+```
+s3-snapshot-store.key-generator-class = "io.findify.akka.persistence.s3.snapshot.keys.PipePathKeySupport"
+```

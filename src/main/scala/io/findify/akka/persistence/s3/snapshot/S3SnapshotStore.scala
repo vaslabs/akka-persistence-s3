@@ -9,6 +9,7 @@ import akka.persistence.snapshot.SnapshotStore
 import akka.serialization.SerializationExtension
 import com.amazonaws.services.s3.model.{ListObjectsRequest, ObjectMetadata, S3ObjectInputStream}
 import com.typesafe.config.Config
+import io.findify.akka.persistence.s3.snapshot.keys.SnapshotKeySupport
 import io.findify.akka.persistence.s3.{S3Client, S3ClientConfig}
 
 import scala.collection.JavaConversions._
@@ -18,10 +19,12 @@ import scala.util.control.NonFatal
 
 case class SerializationResult(stream: ByteArrayInputStream, size: Int)
 
-class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging with SnapshotKeySupport {
+class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging {
   import context.dispatcher
 
-  val settings = new S3SnapshotConfig(config)
+  private val settings = new S3SnapshotConfig(config)
+
+  private val keyController = Class.forName(settings.keySupportClass).getConstructors.head.newInstance(settings).asInstanceOf[SnapshotKeySupport]
 
   val s3Client: S3Client = new S3Client {
     val s3ClientConfig = new S3ClientConfig(context.system.settings.config.getConfig("s3-client"))
@@ -30,8 +33,6 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
   private val serializationExtension = SerializationExtension(context.system)
 
   private val s3Dispatcher = context.system.dispatchers.lookup("s3-snapshot-store.s3-client-dispatcher")
-
-  val extensionName = settings.extension
 
   override def loadAsync(persistenceId: String, criteria: SnapshotSelectionCriteria): Future[Option[SelectedSnapshot]] = {
     snapshotMetadatas(persistenceId, criteria)
@@ -42,13 +43,13 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
   private def load(metadata: immutable.Seq[SnapshotMetadata]): Future[Option[SelectedSnapshot]] = metadata.lastOption match {
     case None => Future.successful(None)
     case Some(md) =>
-      s3Client.getObject(settings.bucketName, snapshotKey(settings.prefix, md))(s3Dispatcher)
+      s3Client.getObject(settings.bucketName, keyController.snapshotKey(settings.prefix, md))(s3Dispatcher)
         .map { obj =>
           val snapshot = deserialize(obj.getObjectContent)
           Some(SelectedSnapshot(md, snapshot.data))
         } recoverWith {
           case NonFatal(e) =>
-            log.error(e, s"Error loading snapshot [${md}]")
+            log.error(e, s"Error loading snapshot [$md]")
             load(metadata.init) // try older snapshot
         }
   }
@@ -59,7 +60,7 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
     objectMetadata.setContentLength(serialized.size)
     s3Client.putObject(
       settings.bucketName,
-      snapshotKey(settings.prefix, metadata),
+      keyController.snapshotKey(settings.prefix, metadata),
       serialized.stream,
       objectMetadata
     )(s3Dispatcher).map(_ => ())
@@ -69,7 +70,7 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
     if (metadata.timestamp == 0L)
       deleteAsync(metadata.persistenceId, SnapshotSelectionCriteria(metadata.sequenceNr, Long.MaxValue, metadata.sequenceNr, Long.MinValue))
     else
-      s3Client.deleteObject(settings.bucketName, snapshotKey(settings.prefix, metadata))(s3Dispatcher)
+      s3Client.deleteObject(settings.bucketName, keyController.snapshotKey(settings.prefix, metadata))(s3Dispatcher)
   }
 
   override def deleteAsync(persistenceId: String, criteria: SnapshotSelectionCriteria): Future[Unit] = {
@@ -81,10 +82,10 @@ class S3SnapshotStore(config: Config) extends SnapshotStore with ActorLogging wi
     s3Client.listObjects(
       new ListObjectsRequest()
         .withBucketName(settings.bucketName)
-        .withPrefix(prefixFromPersistenceId(settings.prefix, persistenceId))
+        .withPrefix(keyController.pathForPersistenceId(settings.prefix, persistenceId))
         .withDelimiter("/")
     )(s3Dispatcher)
-      .map(_.getObjectSummaries.toList.map(s => parseKeyToMetadata(settings.prefix, s.getKey))
+      .map(_.getObjectSummaries.toList.map(s => keyController.parseKeyToMetadata(settings.prefix, s.getKey))
         .filter(m => m.sequenceNr >= criteria.minSequenceNr && m.sequenceNr <= criteria.maxSequenceNr && m.timestamp >= criteria.minTimestamp && m.timestamp <= criteria.maxTimestamp))
 
   }

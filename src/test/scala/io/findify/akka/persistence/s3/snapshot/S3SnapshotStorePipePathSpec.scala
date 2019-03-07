@@ -6,29 +6,34 @@ import io.findify.akka.persistence.s3.{S3Client, S3ClientConfig}
 import io.findify.s3mock.S3Mock
 import io.findify.s3mock.provider.FileProvider
 
-import scala.concurrent.duration._
 import scala.concurrent.Await
+import scala.concurrent.duration._
 
-class S3SnapshotStoreSpec
+/**
+  * Created by shutty on 3/16/17.
+  */
+class S3SnapshotStorePipePathSpec
     extends SnapshotStoreSpec(
       ConfigFactory
         .parseString(
           """
     |akka.persistence.snapshot-store.plugin = "s3-snapshot-store"
     |s3-client{
-    |  region = "us-west-2"
-    |  endpoint = "http://127.0.0.1:4567"
+    |  region = "eu-west-1"
+    |  endpoint = "http://localhost:4567"
     |  options {
     |    path-style-access = true
     |  }
     |}
+    |s3-snapshot-store.prefix = "foo/"
+    |s3-snapshot-store.key-generator-class = "io.findify.akka.persistence.s3.snapshot.keys.PipePathKeySupport"
   """.stripMargin
         )
         .withFallback(ConfigFactory.load())) {
 
   var s3Client: S3Client = _
-  var s3mock: S3Mock = new S3Mock(4567, new FileProvider("/tmp/s3snap"))
-  val bucketName = "snapshot1"
+  var s3mock: S3Mock = new S3Mock(4567, new FileProvider("/tmp/s3prefSnap"))
+  val bucketName = "snapshot3"
 
   override def beforeAll() = {
     import system.dispatcher

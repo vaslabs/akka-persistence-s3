@@ -50,10 +50,14 @@ trait S3Client {
 
   def getObject(bucketName: String, key: String)(
       implicit ec: ExecutionContext): Future[S3Object] = Future {
-    val res = client.getObject(new GetObjectRequest(bucketName, key))
-    println(res.toString)
-    val br = 1
-    res
+    try {
+      val res = client.getObject(new GetObjectRequest(bucketName, key))
+      res
+    } catch {
+      case ex: Exception =>
+      println(s"Failed to retrieve: '$bucketName' '$key'")
+      throw ex
+    }
   }
 
   def listObjects(request: ListObjectsRequest)(
