@@ -28,14 +28,11 @@ class S3SnapshotStorePrefixSpec
     |s3-snapshot-store.prefix = "foo/"
   """.stripMargin
         )
-        .withFallback(ConfigFactory.load()))
-    with SnapshotKeySupport {
+        .withFallback(ConfigFactory.load())) {
 
   var s3Client: S3Client = _
   var s3mock: S3Mock = new S3Mock(4567, new FileProvider("/tmp/s3prefSnap"))
-  val bucketName = "snapshot"
-
-  val extensionName: String = "ss"
+  val bucketName = "snapshot2"
 
   override def beforeAll() = {
     import system.dispatcher
